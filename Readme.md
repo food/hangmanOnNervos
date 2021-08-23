@@ -2,6 +2,9 @@
 
 This game is a test only. I need a dApp with etherium contracts to solve https://gitcoin.co/issue/nervosnetwork/grants/8/100026214 so i created a own one to port it now to nervos block chain
 
+A version that is connected to: Rinkeby Testnetzwerk, you can find here:
+http://hangman.ethereum.testnet.helmig.berlin/
+
 ## Required
 
 - trullfe
