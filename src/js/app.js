@@ -1,3 +1,9 @@
+const CONFIG = {
+    WEB3_PROVIDER_URL: 'https://godwoken-testnet-web3-rpc.ckbapp.dev',
+    ROLLUP_TYPE_HASH: '0x4cc2e6526204ae6a2e8fcf12f7ad472f41a1606d5b9624beebd215d780809f6a',
+    ETH_ACCOUNT_LOCK_CODE_HASH: '0x6d6fa9effb1af59c5a6aa73c4d71e510b635d49557a92e1b42d030fed1aee0dc'
+};
+
 App = {
     web3Provider: null,
 	overview: "#overview",
@@ -18,8 +24,27 @@ App = {
 	initWeb3: async () => {
 		// Modern dapp browsers...
 		if (window.ethereum) {
-			if(window.ethereum.chainId === "0x4" || window.ethereum.chainId === "0x539") {
-				App.web3Provider = window.ethereum;
+			console.log("window.ethereum.chainId");
+			console.log(window.ethereum.chainId);
+			if(window.ethereum.chainId === "0x116e1" || window.ethereum.chainId === "0x539") { // alloow intern and godwoken
+				
+				
+				const godwokenRpcUrl = CONFIG.WEB3_PROVIDER_URL;
+				const providerConfig = {
+					rollupTypeHash: CONFIG.ROLLUP_TYPE_HASH,
+					ethAccountLockCodeHash: CONFIG.ETH_ACCOUNT_LOCK_CODE_HASH,
+					web3Url: godwokenRpcUrl
+				};
+
+				const provider = new PolyjuiceHttpProvider(godwokenRpcUrl, providerConfig);
+				//const web3 = new Web3(provider || Web3.givenProvider);
+
+
+				console.log("provider");
+				console.log(provider);
+
+				//App.web3Provider = window.ethereum;
+				App.web3Provider = provider;
 				try {
 					// Request account access
 					await window.ethereum.enable();
@@ -28,7 +53,7 @@ App = {
 					console.error("User denied account access")
 				}
 			} else {
-				$("#error").text("Please connect to Rinkeby Testnetzwerk and reload");
+				$("#error").text("Please connect Metamsak to Godwoken Testnet and reload");
 			}
 		}
 		// Legacy dapp browsers...
@@ -37,7 +62,7 @@ App = {
 		}
 		// If no injected web3 instance is detected, fall back to Ganache
 		else {
-			App.web3Provider = new Web3.providers.HttpProvider("http://localhost:85452");
+			App.web3Provider = new Web3.providers.HttpProvider("https://godwoken-testnet-web3-rpc.ckbapp.dev");
 		}
 
 		

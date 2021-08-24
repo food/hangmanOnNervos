@@ -1,6 +1,6 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-const seed = "";
-const rinkebyUrl = "https://rinkeby.infura.io/v3/c5923576f7f94496bdd34d21d19dd703";
+const seed = "render demise thrive later scan destroy monitor more elegant crazy silk alone";
+const godWokenUrl = "https://godwoken-testnet-web3-rpc.ckbapp.dev";
 
 module.exports = {
   networks: {
@@ -9,9 +9,9 @@ module.exports = {
       port: 8545,
       network_id: "*" // Match any network id
     },
-    rinkeby: {
-      provider: () => new HDWalletProvider(seed, rinkebyUrl),
-      network_id: 4,       // Ropsten's id
+    godwoken: {
+      provider: () => new HDWalletProvider(seed, godWokenUrl),
+      network_id: 71393,       // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)

@@ -24,6 +24,8 @@ trouffle init
 truffle compile
 truffle migrate  // truffle migrate --reset
 
+// truffle migrate --network rinkeby
+
 ## contract functions
 
 truffle console
@@ -46,3 +48,6 @@ truffle console
     (await hangman.lettersLength()).toNumber()
     await hangman.lettersLength(0))
     
+
+npm install -g browserify
+browserify main.js -o bundle.js
