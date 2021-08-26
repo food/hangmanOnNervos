@@ -43,7 +43,7 @@ export class App {
 			if(window.ethereum.chainId === "0x116e1" || window.ethereum.chainId === "0x539") { // alloow intern and godwoken
 				await window.ethereum.request({ method: 'eth_requestAccounts' });
 				this.accountAddress = (await window.ethereum.request({ method: 'eth_accounts' }))[0];
-				this.web3 = new Web3(provider);
+				this.web3 = new Web3(window.ethereum);
 				(window as any).web3 = this.web3;
 				this.web3.eth.accounts = new PolyjuiceAccounts(polyjuiceConfig);
 				this.web3Provider = provider;
@@ -66,7 +66,7 @@ export class App {
 	}
 
 	async initContract () {
-		const hangmanContracts = new this.web3.eth.Contract(Hangman.abi as any, "0xA203D7C76a29792dfC926C936D9974e357895077") as any;
+		const hangmanContracts = new this.web3.eth.Contract(Hangman.abi as any, "0xbb7d017ab5Ad5C5646f045EC73ffdFE6e3f976F7") as any;
 		// Set the provider for our contract
 		hangmanContracts.setProvider(this.web3Provider);
 		return hangmanContracts;
@@ -84,6 +84,7 @@ export class App {
 			throw new Error("No character given");
 		}
 
+		jq("#loading").show();
 		await (window as any).app.game.guessALetter(val);
 		jq("#guessLetter").val("");
 		await (window as any).app.reloadGameData();
@@ -96,13 +97,13 @@ export class App {
 			throw new Error("No word given");
 		}
 
+		jq("#loading").show();
 		await (window as any).app.game.createGame(val);
 		await (window as any).app.reloadGameData();
 		jq("#newWord").val("");
 	}
 
 	async reloadGameData () {
-		jq("#loading").show();
 		// reload game data
 		await (window as any).app.game.collectGameData();
 

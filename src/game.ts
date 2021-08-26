@@ -69,29 +69,12 @@ export class Game {
             throw new Error("Contract is missing!");
         }
 
-        /*
+		const hangmanInstance = this.contract.methods;
+        const gasEstimated = await hangmanInstance.guessALetter(letter).estimateGas({ from: this.accountAddress });
         await hangmanInstance.guessALetter(letter).send({
-            gas: 6000000,
-            gasPrice: '0',
+            gas: gasEstimated,
             from: this.accountAddress
         });
-        */
-		const hangmanInstance = this.contract.methods;
-        /*await hangmanInstance.guessALetter(letter).send({
-            gas: this.gas,
-            gasPrice: this.gasPrice,
-            from: this.accountAddress});*/
-
-        await window.ethereum
-            .request({
-              method: 'eth_sendTransaction',
-              params: [
-                {
-                  from: this.accountAddress,
-                  value: letter
-                },
-              ],
-            });
     }
 
     async createGame(word: string) {
@@ -100,9 +83,9 @@ export class Game {
         }
 
 		const hangmanInstance = this.contract.methods;
-        await hangmanInstance.createGame(word.toUpperCase(),  {
-            gas: this.gas,
-            gasPrice: this.gasPrice,
+        const gasEstimated = await hangmanInstance.createGame(word.toUpperCase()).estimateGas({ from: this.accountAddress });
+        await hangmanInstance.createGame(word.toUpperCase()).send({
+            gas: gasEstimated,
             from: this.accountAddress});
     }
 }
