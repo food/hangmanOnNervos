@@ -1,7 +1,9 @@
 import Web3  from "web3";
 import { PolyjuiceHttpProvider, PolyjuiceAccounts } from "@polyjuice-provider/web3";
+import { AddressTranslator } from "nervos-godwoken-integration";
 import { Game } from "./game";
 import * as Hangman from "../data/Hangman.json";
+import * as ERC20 from "../data/ERC20.json";
 
 const CONFIG = {
     WEB3_PROVIDER_URL: "https://godwoken-testnet-web3-rpc.ckbapp.dev",
@@ -31,7 +33,9 @@ export class App {
     interactions: string = "#interactions";
     over: string = "#over";
 	game?: Game;
-	accountAddress: string;
+	accountAddress: string = "";
+	SUDT_ERC20_ProxyContractAddress: string = "0xDA17C57FEb42743D16F137D0cCb28c03baaebAf9";
+	polyjuiceAddress: string = "";
 
     constructor() {
 		this.bindEvents();
@@ -75,6 +79,7 @@ export class App {
   	bindEvents () {
     	jq(document).on("click", ".btn-guess", this.handleGuessALetter);
     	jq(document).on("click", ".btn-create", this.handleCreateGame);
+    	jq(document).on("click", ".btn-generate", this.handleGenerateLayerTwo);
   	}
 
 	async handleGuessALetter (e: Event): Promise<void> {
@@ -103,6 +108,19 @@ export class App {
 		jq("#newWord").val("");
 	}
 
+	async handleGenerateLayerTwo (e: Event): Promise<void> {
+		e.preventDefault();
+		const etherAddress = jq("#etherAddress").val() as string;
+		if(!etherAddress || etherAddress === ""){
+			throw new Error("No ether address given");
+		}
+		const addressTranslator = new AddressTranslator();
+		const depositAddress = await addressTranslator.getLayer2DepositAddress((window as any).app.web3, etherAddress);
+
+		console.log(`Layer 2 Deposit Address on Layer 1: \n${depositAddress.addressString}`);
+		jq("#layer2Address").val(depositAddress.addressString);
+	}
+
 	async reloadGameData () {
 		// reload game data
 		await (window as any).app.game.collectGameData();
@@ -122,6 +140,27 @@ export class App {
 			jq("#runningGame").show();
 		}
 	}
+
+	async autoGenerateLayer2Address () {
+		jq("#etherAddress").val(this.accountAddress);
+		const addressTranslator = new AddressTranslator();
+		const depositAddress = await addressTranslator.getLayer2DepositAddress((window as any).app.web3, this.accountAddress);
+		jq("#layer2Address").val(depositAddress.addressString);
+	}
+
+	async usersAssetBalance() {
+		const { AddressTranslator } = require('nervos-godwoken-integration');
+		const addressTranslator = new AddressTranslator();
+		this.polyjuiceAddress = addressTranslator.ethAddressToGodwokenShortAddress(this.accountAddress);
+
+		setInterval(async ()=>{
+			const contract = new (window as any).app.web3.eth.Contract(ERC20.abi, this.SUDT_ERC20_ProxyContractAddress);
+			const balance = await contract.methods.balanceOf(this.polyjuiceAddress).call({from: this.accountAddress});
+
+			jq("#balance").text(balance || 0);
+		}, 2000);
+	}
+
 };
 
 jq(() => {
@@ -131,5 +170,7 @@ jq(() => {
 		await app.initWeb3();
 		await app.loadContractAndGame();
 		await app.reloadGameData();
+		await app.autoGenerateLayer2Address();
+		await app.usersAssetBalance();
 	});
 });

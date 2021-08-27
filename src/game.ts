@@ -29,20 +29,22 @@ export class Game {
             throw new Error("Contract is missing!");
         }
 
-        // get simple ones
 		const hangmanInstance = this.contract.methods;
 
+        // get simple ones
         const p1 = hangmanInstance.gameStatus().call({from: this.accountAddress});
         const p2 = hangmanInstance.winner().call({from: this.accountAddress});
         const p3 = hangmanInstance.trysLeft().call({from: this.accountAddress});
-        const [gameStatus, winner, trysLeft] = await Promise.all([p1, p2, p3]);
+
+        // get the others
+        const p4 = this.getPrizeWord(hangmanInstance);
+        const p5 = this.getburnedLetters(hangmanInstance);
+
+        const [gameStatus, winner, trysLeft] = await Promise.all([p1, p2, p3, p4, p5]);
         this.gameStatus = GameStatusEum[gameStatus];
         this.winner = WinnerEnum[winner];
         this.trysLeft = parseInt(trysLeft , 10);
 
-        // get the others
-        await this.getPrizeWord(hangmanInstance);
-        await this.getburnedLetters(hangmanInstance);
     }
 
     async getPrizeWord(hangmanInstance: any) {

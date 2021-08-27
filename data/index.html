@@ -21,13 +21,17 @@
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script-->
     <!--script src="/node_modules/@metamask/onboarding/dist/metamask-onboarding.bundle.js"></script-->
 
-    <style>
-      #guess {background-color: rgb(173, 230, 201);}
-      #overview {background-color: lightblue;}
-      #interactions {background-color: rgb(230, 173, 222);}
-    </style>
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #e3f2fd;">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Hangman on Nervos<i class="bi bi-cash-stack"></i></a>
+        <span class="navbar-text">
+          <span>Your Balance:</span>
+          <span id="balance">0</span>
+        </span>
+      </div>
+    </nav>
     <div id="error" style="text-align: center; background-color: rgb(223, 57, 57);"></div>
     <div id="loading" style="text-align: center;"><h1>Please wait :)</h1></div>
 
@@ -91,17 +95,87 @@
       <div class="row">
         <div class="col">
           <div class="mb-3">
-            <input type="text" class="form-control" id="guessLetter" placeholder="GUESS A LETTER" maxlength="1" onkeypress="return /[a-z]/i.test(event.key)">
+            <input type="text" style="width: 90%; float: left;" class="form-control" id="guessLetter" placeholder="GUESS A LETTER" maxlength="1" onkeypress="return /[a-z]/i.test(event.key)">
+            <button type="button" style="margin-left: 60px;" class="btn btn-success btn-guess">Guess</button>
           </div>
-          <button type="button" class="btn btn-success btn-guess">Guess</button>
         </div>
       </div>
-    </div>
 
+      <div class="row" style="padding-top: 100px;">
+        <div class="col">
+          <div class="accordion" id="accordionSwapAssets">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Gitcoin: 8: bridge assets
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse showA" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col">
+                        To bring your assets to the Nervos blockchain leas follw the steps 1 - 3.
+                      </div>
+                    </div>
+                    <div class="row" style="padding-top: 40px">
+                      <div class="col">
+                        1) Type your your Etherium address:
+                      </div>
+                      <div class="col">
+                        <input type="text" style="height: 80%;" class="form-control" id="etherAddress" placeholder="0x00">
+                      </div>
+                      <div class="col center">
+                        <button type="button" class="btn btn-info btn-generate" style="float: right;">Generate</button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col center">
+                        2) Copy your layer 2 Address:
+                      </div>
+                      <div class="col">
+                        <textarea id="layer2Address" class="form-control" aria-label="With textarea" rows="9"></textarea>
+                      </div>
+                      <div class="col center">
+                        <button type="button" class="btn btn-info btn-generate" style="float: right; width: 90px;" onclick="cpFnc()">Copy</button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col" style="padding-top: 40px">
+                        3a) Go to the <a target="new" href="https://force-bridge-test.ckbapp.dev/bridge/Ethereum/Nervos?xchain-asset=0x0000000000000000000000000000000000000000" class="link-primary">Bridge</a> <br>
+                        3b) Switch your wallet  to Rinkeby network.
+                        3c) Connect your wallet  to bridge.
+                        3d) Past the layer 2 address as receiving address (Recipient)
+                        4e) click "Bridge"
+                        After authorising you should receive your Asset on Nervos testnet
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     <script src="/app.js"></script>
+
+    <script>
+      // https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
+      function cpFnc() {
+        /* Get the text field */
+        var copyText = document.getElementById("layer2Address");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+      }
+    </script>
   </body>
 </html>
